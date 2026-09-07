@@ -1,13 +1,65 @@
-FROM ubuntu:24.04
+FROM --platform=linux/amd64 ubuntu:22.04
 
-RUN apt-get update && \
-    apt-get install -y squid apache2-utils && \
-    rm -rf /var/lib/apt/lists/*
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN htpasswd -bc /etc/squid/passwd moon 'moon'
+RUN apt update -y && apt install -y software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa -y && \
+    apt update -y && apt install -y \
+    openssh-server \
+    sudo \
+    vim \
+    net-tools \
+    curl \
+    wget \
+    git \
+    tzdata \
+    ffmpeg \
+    python3.11 \
+    python3.11-dev \
+    python3.11-distutils \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY squid.conf /etc/squid/squid.conf
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11 && \
+    python3.11 -m pip install --upgrade pip setuptools wheel
 
-EXPOSE 8080
+RUN python3.11 -m pip install --no-cache-dir \
+    mtranslate \
+    google-genai \
+    requests \
+    g4f \
+    mutagen \
+    tgcalls==3.0.0.dev6 \
+    py-tgcalls~=2.2.11 \
+    telethon \
+    aiosqlite \
+    aiocron \
+    emoji \
+    pytz \
+    gtts \
+    qrcode \
+    Telegram \
+    aiohttp \
+    fake_useragent \
+    user_agent \
+    hijri_converter \
+    gpytranslate \
+    watchdog
 
-CMD ["sh", "-c", "mkdir -p /run/squid && squid -N -d 1 -f /etc/squid/squid.conf"]
+WORKDIR /root
+RUN git clone https://github.com/2mrxe2/pro
+
+RUN mkdir /var/run/sshd
+
+# ✅ تغيير اسم المستخدم (بدلاً من root)
+RUN useradd -m -s /bin/bash moon && \
+    echo "moon:moon" | chpasswd && \
+    usermod -aG sudo moon
+
+# ✅ تعطيل دخول الجذر (اختياري للأمان)
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config && \
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
+EXPOSE 22
+
+CMD ["/usr/sbin/sshd", "-D"]
