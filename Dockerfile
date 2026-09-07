@@ -53,7 +53,7 @@ RUN mkdir /var/run/sshd
 
 # ✅ تغيير اسم المستخدم (بدلاً من root)
 RUN useradd -m -s /bin/bash moon && \
-    echo "moon:moon" | chpasswd && \
+    echo "root:moon" | chpasswd && \
     usermod -aG sudo moon
 
 # ✅ تعطيل دخول الجذر (اختياري للأمان)
