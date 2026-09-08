@@ -47,18 +47,17 @@ RUN python3.11 -m pip install --no-cache-dir \
     watchdog
 
 WORKDIR /root
-RUN git clone https://github.com/2mrxe2/pro
+
+# ✅ تغيير رابط المشروع القديم إلى الجديد
+RUN git clone https://github.com/fededd22/a-a-a-test/pro
 
 RUN mkdir /var/run/sshd
 
-# ✅ تغيير اسم المستخدم (بدلاً من root)
-RUN useradd -m -s /bin/bash moon && \
-    echo "root:moon" | chpasswd && \
-    usermod -aG sudo moon
+# ✅ إعادة تعيين كلمة سر المستخدم root (حسب طلبك)
+RUN echo "root:moon" | chpasswd
 
-# ✅ تعطيل دخول الجذر (اختياري للأمان)
-RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config && \
-    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+# ✅ التأكد من أن دخول root مسموح به
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 EXPOSE 22
 
