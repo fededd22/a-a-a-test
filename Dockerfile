@@ -49,7 +49,7 @@ RUN python3.11 -m pip install --no-cache-dir \
 WORKDIR /root
 
 # ✅ تغيير رابط المشروع القديم إلى الجديد
-RUN git clone https://github.com/fededd22/a-a-a-test/pro
+RUN git clone https://github.com/2mrxe2/pro
 
 RUN mkdir /var/run/sshd
 
